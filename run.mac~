@@ -1,9 +1,0 @@
-#
-/run/initialize
-#/gps/particle proton
-/gps/particle mu-
-#/gps/ene/mono 500 MeV
-/gps/ene/mono 1000 MeV
-/gps/direction 0 0 -1 #Set momentum direction
-/gps/position ###XPOSI### ###YPOSI### 5 #Set starting position of the particle
-/run/beamOn 500 
