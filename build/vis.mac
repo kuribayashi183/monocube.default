@@ -8,7 +8,8 @@
 #
 # Create a scene handler and a viewer for the OGLIXm driver
 #
-#/vis/open OGL 900x900-0+0
+/run/initialize
+/vis/open OGL 900x900-0+0
 /vis/viewer/set/background white
 #
 #/vis/viewer/set/style surface

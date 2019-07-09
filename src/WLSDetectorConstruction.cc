@@ -562,8 +562,8 @@ void WLSDetectorConstruction::ConstructFiber()
   	G4double refl_mppc[] = {fMPPCReflectivity,fMPPCReflectivity};
   	assert(sizeof(refl_mppc) == sizeof(p_mppc));
 	// ----- efficiency parameter 
-       	G4double effi_mppc[] = {1, 1}; // original
-  	//G4double effi_mppc[] = {0.35, 0.30}; // 
+	//      	G4double effi_mppc[] = {1, 1}; // original
+  	G4double effi_mppc[] = {0.35, 0.30}; // 
   	assert(sizeof(effi_mppc) == sizeof(p_mppc));
  
   	photonDetSurfProp->AddProperty("REFLECTIVITY",p_mppc, refl_mppc, nbins);
