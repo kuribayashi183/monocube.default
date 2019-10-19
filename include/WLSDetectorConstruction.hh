@@ -61,7 +61,7 @@ class WLSDetectorConstruction : public G4VUserDetectorConstruction
 {
   public:
 
-    WLSDetectorConstruction();
+  WLSDetectorConstruction(G4double, G4double, G4double, G4double);
     virtual ~WLSDetectorConstruction();
 
     virtual G4VPhysicalVolume* Construct();
@@ -208,8 +208,10 @@ class WLSDetectorConstruction : public G4VUserDetectorConstruction
     G4double fBarBase;
     G4double fHoleRadius;
     G4double fHoleLength;
+  G4double fHolePos;
     G4double fCoatingThickness;
     G4double fCoatingRadius;
+  G4double fCubeReflectivity;
 
   private:
 
