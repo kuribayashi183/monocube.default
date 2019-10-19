@@ -61,7 +61,7 @@
 // -> it is ONE when only the name is  given !!!
 // argv[0] is always the name of the program
 // argv[1] points to the first argument, and so on
-
+// please 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 int main(int argc,char** argv) 
@@ -73,11 +73,22 @@ int main(int argc,char** argv)
   	if (argc  > 2) seed = atoi(argv[argc-1]);
 
 	G4String inpName;
-	if (argc==3) inpName = argv[2];
+	if (argc > 2) inpName = argv[2];
 	else         inpName = "cube";
-	
+
+	G4double length = 200;
+	G4double gaplength;
+	G4double mirror_reflectivity = 0;
+	G4double cube_reflectivity = 0.97;
+	if(argc>3) length = atof(argv[3]);
+	gaplength = length/2;
+	if(argc>4) gaplength = atof(argv[4]);
+	if(argc>5) mirror_reflectivity = atof(argv[5]);
+	if(argc>6) cube_reflectivity = atof(argv[6]);
+
 	if (argv[1]!=NULL) G4cout << "input macro  name is " << argv[1] << G4endl;
 	G4cout << "input rootfile name is " << inpName << G4endl;
+	G4cout << "length : gaplength : mirror_reflectivity : cube_reflectivity" << length << " " << gaplength << " " << mirror_reflectivity << " " << cube_reflectivity << G4endl;
 
   // Choose the Random engine and set the seed
 
@@ -111,7 +122,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  WLSDetectorConstruction* detector = new WLSDetectorConstruction();
+  WLSDetectorConstruction* detector = new WLSDetectorConstruction(length, gaplength, mirror_reflectivity, cube_reflectivity);
   runManager->SetUserInitialization(detector);
   // Physics list
   runManager->SetUserInitialization(new WLSPhysicsList(physName));
