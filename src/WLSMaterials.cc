@@ -33,6 +33,8 @@
 
 #include "G4SystemOfUnits.hh"
 
+#include "parameter.hh"
+
 WLSMaterials* WLSMaterials::fInstance = 0;
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -159,7 +161,7 @@ void WLSMaterials::CreateMaterials()
   //--------------------------------------------------
   // Polystyrene
   //--------------------------------------------------
- 
+
   elements.push_back("C");     natoms.push_back(8);
   elements.push_back("H");     natoms.push_back(8);
 
@@ -176,7 +178,7 @@ void WLSMaterials::CreateMaterials()
 
   elements.push_back("C");     natoms.push_back(2);
   elements.push_back("H");     natoms.push_back(6);
-  
+
   density = 1.060*g/cm3;
 
   fSilicone = fNistMan->
@@ -220,16 +222,16 @@ void WLSMaterials::CreateMaterials()
   // ------------ Generate & Add Material Properties Table ------------
   //
 // [nm]
-// 620      610.837     601.942     593.301  584.906     576.744     568.807  561.086     553.571     546.256     
-// 539.13   532.189     525.424     518.828  512.397     506.122     500      494.024     488.189     482.49      
-// 476.923  471.483     466.165     460.967  455.882     450.909     446.043  441.281     436.62      432.056     
-// 427.586  423.208     418.919     414.716  410.596     406.557     402.597  398.714     394.904     391.167     
-// 387.5    383.901     380.368     376.9    373.494     370.149     366.864  363.636     360.465     357.349     
+// 620      610.837     601.942     593.301  584.906     576.744     568.807  561.086     553.571     546.256
+// 539.13   532.189     525.424     518.828  512.397     506.122     500      494.024     488.189     482.49
+// 476.923  471.483     466.165     460.967  455.882     450.909     446.043  441.281     436.62      432.056
+// 427.586  423.208     418.919     414.716  410.596     406.557     402.597  398.714     394.904     391.167
+// 387.5    383.901     380.368     376.9    373.494     370.149     366.864  363.636     360.465     357.349
    G4double photonEnergy[] = {
-   2.00*eV,2.03*eV,2.06*eV,2.09*eV,2.12*eV,2.15*eV,2.18*eV,2.21*eV,2.24*eV,2.27*eV, 
-   2.30*eV,2.33*eV,2.36*eV,2.39*eV,2.42*eV,2.45*eV,2.48*eV,2.51*eV,2.54*eV,2.57*eV, 
-   2.60*eV,2.63*eV,2.66*eV,2.69*eV,2.72*eV,2.75*eV,2.78*eV,2.81*eV,2.84*eV,2.87*eV, 
-   2.90*eV,2.93*eV,2.96*eV,2.99*eV,3.02*eV,3.05*eV,3.08*eV,3.11*eV,3.14*eV,3.17*eV, 
+   2.00*eV,2.03*eV,2.06*eV,2.09*eV,2.12*eV,2.15*eV,2.18*eV,2.21*eV,2.24*eV,2.27*eV,
+   2.30*eV,2.33*eV,2.36*eV,2.39*eV,2.42*eV,2.45*eV,2.48*eV,2.51*eV,2.54*eV,2.57*eV,
+   2.60*eV,2.63*eV,2.66*eV,2.69*eV,2.72*eV,2.75*eV,2.78*eV,2.81*eV,2.84*eV,2.87*eV,
+   2.90*eV,2.93*eV,2.96*eV,2.99*eV,3.02*eV,3.05*eV,3.08*eV,3.11*eV,3.14*eV,3.17*eV,
    3.20*eV,3.23*eV,3.26*eV,3.29*eV,3.32*eV,3.35*eV,3.38*eV,3.41*eV,3.44*eV,3.47*eV};
   	const G4int nEntries = sizeof(photonEnergy)/sizeof(G4double);
 
@@ -253,12 +255,11 @@ void WLSMaterials::CreateMaterials()
    // https://indico.cern.ch/event/143675/contributions/164201/
 	// https://doi.org/10.1016/j.nima.2010.09.027
 
-   G4double refractiveIndexWLSfiber[] = {
-   1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59,
-   1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59,
-   1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59,
-   1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59,
-   1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59, 1.59};
+   G4double refractiveIndexWLSfiber[NSpectrum];
+   for(int i=0; i<NSpectrum; i++)
+   {
+       refractiveIndexWLSfiber[i] = parameter::refractiveIndexWLSfiber[i];
+   }
    assert(sizeof(refractiveIndexWLSfiber) == sizeof(photonEnergy));
 /* //  default
    G4double absWLSfiber[] = {
@@ -268,30 +269,17 @@ void WLSMaterials::CreateMaterials()
    1.10*m,1.10*m,1.10*m,1.10*m,1.10*m,1.10*m,1.0*mm,1.0*mm,1.0*mm,1.0*mm,
    1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm,1.0*mm};
 */
-   G4double absWLSfiber[] = {
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,2.80*m, 
-// 427.586  423.208     418.919     414.716  410.596     406.557     402.597  398.714     394.904     391.167     
-// 387.5    383.901     380.368     376.9    373.494     370.149     366.864  363.636     360.465     357.349     
-   //2.40*m,2.20*m,2.00*m,1.80*m,1.60*m,1.30*m,1.00*m,0.80*m,0.60*m,0.20*m,
-   //0.10*m,0.10*m,0.05*m,0.05*m,0.01*m,0.01*m,0.01*m,0.01*m,0.01*m,0.01*m};
-   2.40*m,2.20*m,2.00*m,1.60*m,1.40*m,1.20*m,1.00*m,0.70*m,0.50*m,0.30*m,
-   0.10*m,0.05*m,0.02*m,1.0*mm,0.5*mm,0.2*mm,0.1*mm,0.1*mm,0.1*mm,0.1*mm};
-/* // default
-   G4double emissionFib[] = {
-   0.05, 0.10, 0.30, 0.50, 0.75, 1.00, 1.50, 1.85, 2.30, 2.75, // 
-   3.25, 3.80, 4.50, 5.20, 6.00, 7.00, 8.50, 9.50, 11.1, 12.4, // 
-   12.9, 13.0, 12.8, 12.3, 11.1, 11.0, 12.0, 11.0, 17.0, 16.9, // 
-   15.0, 9.00, 2.50, 1.00, 0.05, 0.00, 0.00, 0.00, 0.00, 0.00, // 
-   0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00};// 
-*/
-   G4double emissionFib[] = {
-   0.00, 0.00, 0.00, 0.02, 0.05, 0.09, 0.11, 0.14, 0.17, 0.20, //
-   0.30, 0.35, 0.40, 0.45, 0.50, 0.60, 0.67, 0.80, 0.75, 0.75, // 
-   0.80, 0.85, 1.00, 0.92, 0.75, 0.62, 0.45, 0.20, 0.10, 0.00, //
-   0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, // 
-   0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00};// 
+   G4double absWLSfiber[NSpectrum];
+   for(int i=0; i<NSpectrum; i++)
+   {
+       absWLSfiber[i] = parameter::absWLSfiber[i];
+   }
+
+   G4double emissionFib[NSpectrum];
+   for(int i=0; i<NSpectrum; i++)
+   {
+       emissionFib[i] = parameter::emissionFib[i];
+   }
    assert(sizeof(emissionFib) == sizeof(photonEnergy));
 
    // Add entries into properties table
@@ -300,31 +288,18 @@ void WLSMaterials::CreateMaterials()
    //mptWLSfiber->AddProperty("ABSLENGTH",photonEnergy,absWLSfiber,nEntries);
    mptWLSfiber->AddProperty("WLSABSLENGTH",photonEnergy,absWLSfiber,nEntries);
    mptWLSfiber->AddProperty("WLSCOMPONENT",photonEnergy,emissionFib,nEntries);
-   mptWLSfiber->AddConstProperty("WLSTIMECONSTANT", 1*ns);
+   mptWLSfiber->AddConstProperty("WLSTIMECONSTANT", parameter::WLSTime);
 
-   // ----- PMMA (inner claddig) 
+   // ----- PMMA (inner claddig)
 	//http://kuraraypsf.jp/pdf/all.pdf
-   G4double refractiveIndexClad1[] = {
-   1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49,
-   1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49,
-   1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49,
-   1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49,
-   1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49, 1.49};
+   G4double refractiveIndexClad1[NSpectrum];
+   G4double absClad[NSpectrum];
+   for(int i=0; i<NSpectrum; i++)
+   {
+       refractiveIndexClad1[i] = parameter::refractiveIndexClad1[i];
+       absClad[i] = parameter::absClad[i];
+   }
    assert(sizeof(refractiveIndexClad1) == sizeof(photonEnergy));
-/*
-   G4double absClad[] = {
-   20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,
-   20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,
-   20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,
-   20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,
-   20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m,20.0*m};
-*/
-   G4double absClad[] = {
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m, // 485nm -- 430nm
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m, // 428nm
-   4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.50*m,4.40*m,4.20*m,4.00*m};// 395nm -- 357nm
    assert(sizeof(absClad) == sizeof(photonEnergy));
 
    // Add entries into properties table
@@ -333,14 +308,13 @@ void WLSMaterials::CreateMaterials()
    mptClad1->AddProperty("ABSLENGTH",photonEnergy,absClad,nEntries);
 
 
-   // ----- Fluorinated Polyethylene (outer cladding(FP)) 
+   // ----- Fluorinated Polyethylene (outer cladding(FP))
 	// http://kuraraypsf.jp/pdf/all.pdf
-   G4double refractiveIndexClad2[] = {
-   1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42,
-   1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42,
-   1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42,
-   1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42,
-   1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42, 1.42};
+   G4double refractiveIndexClad2[NSpectrum];
+   for(int i=0; i<NSpectrum; i++)
+   {
+       refractiveIndexClad2[i] = parameter::refractiveIndexClad2[i];
+   }
    assert(sizeof(refractiveIndexClad2) == sizeof(photonEnergy));
 
    // Add entries into properties table
@@ -380,53 +354,27 @@ void WLSMaterials::CreateMaterials()
   fSilicone->SetMaterialPropertiesTable(mptSilicone);
 
    // ----- Polystyrene / scintillator
-// 620      610.837     601.942     593.301  584.906     576.744     568.807  561.086     553.571     546.256     
-// 539.13   532.189     525.424     518.828  512.397     506.122     500      494.024     488.189     482.49      
-// 476.923  471.483     466.165     460.967  455.882     450.909     446.043  441.281     436.62      432.056     
-// 427.586  423.208     418.919     414.716  410.596     406.557     402.597  398.714     394.904     391.167     
-// 387.5    383.901     380.368     376.9    373.494     370.149     366.864  363.636     360.465     357.349     
+// 620      610.837     601.942     593.301  584.906     576.744     568.807  561.086     553.571     546.256
+// 539.13   532.189     525.424     518.828  512.397     506.122     500      494.024     488.189     482.49
+// 476.923  471.483     466.165     460.967  455.882     450.909     446.043  441.281     436.62      432.056
+// 427.586  423.208     418.919     414.716  410.596     406.557     402.597  398.714     394.904     391.167
+// 387.5    383.901     380.368     376.9    373.494     370.149     366.864  363.636     360.465     357.349
   	G4double refractiveIndexPS[] =
   	{1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50,
     1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50,
     1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50, 1.50};
   	assert(sizeof(refractiveIndexPS) == sizeof(photonEnergy));
- 	G4double absPS[] = {
-#if 0 // default
-	2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,
-   2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,
-   2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm};
-#endif
-#if 1 
-
-	38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
-	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
-	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
-	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
-	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm};
-	/*   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm};*/
-#endif
+ 	G4double absPS[NSpectrum];
+    for(int i=0;i<NSpectrum; i++)
+    {
+        absPS[i] = parameter::absPS[i];
+    }
   	assert(sizeof(absPS) == sizeof(photonEnergy));
-	G4double scintilFast[] = { 
-#if 0 // default
-  	0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-   0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-   0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-   //1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, // default
-   //1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0}; // default
-   0.20, 0.40, 0.60, 0.80, 0.90, 1.0, 1.0, 1.0, 1.0, 1.0,
-   1.0, 1.0, 1.0, 1.0, 0.80, 0.60, 0.40, 0.20, 0.10, 0.00};
-#endif
-#if 1 // POPOP second emission : https://doi.org/10.1016/j.nima.2007.04.147
-   0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,  
-   0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00,
-   0.00, 0.00, 0.00, 0.00, 0.05, 0.10, 0.20, 0.30, 0.40, 0.60,
-   0.50, 0.60, 0.70, 0.80, 1.00, 0.90, 0.80, 0.70, 0.60, 0.50, 
-   0.90, 1.00, 0.90, 0.50, 0.20, 0.05, 0.00, 0.00, 0.00, 0.00}; 
-#endif
+	G4double scintilFast[NSpectrum];
+    for(int i=0; i<NSpectrum; i++)
+    {
+        scintilFast[i] = parameter::scintilFast[i];
+    }
    assert(sizeof(scintilFast) == sizeof(photonEnergy));
 
   	// Add entries into properties table
@@ -446,10 +394,10 @@ void WLSMaterials::CreateMaterials()
    mptPolystyrene->AddProperty("FASTCOMPONENT",photonEnergy, scintilFast,nEntries);
 
    mptPolystyrene->AddConstProperty("EFFICIENCY",1);
-   mptPolystyrene->AddConstProperty("SCINTILLATIONYIELD",10./keV); // typical pla-scinti ~ 10,000/MeV 
+   mptPolystyrene->AddConstProperty("SCINTILLATIONYIELD", parameter::scintiLY); // typical pla-scinti ~ 10,000/MeV
    //mptPolystyrene->AddConstProperty("SCINTILLATIONYIELD",50./keV);
    mptPolystyrene->AddConstProperty("RESOLUTIONSCALE",1.0);
-   mptPolystyrene->AddConstProperty("FASTTIMECONSTANT",1.*ns);
+   mptPolystyrene->AddConstProperty("FASTTIMECONSTANT", parameter::scintiTime);
    //mptPolystyrene->AddConstProperty("SLOWTIMECONSTANT",5.*ns);
 #endif
    fPolystyrene->SetMaterialPropertiesTable(mptPolystyrene);
@@ -457,5 +405,3 @@ void WLSMaterials::CreateMaterials()
   	// Set the Birks Constant for the Polystyrene scintillator
   	fPolystyrene->GetIonisation()->SetBirksConstant(0.126*mm/MeV);
 }
-
-

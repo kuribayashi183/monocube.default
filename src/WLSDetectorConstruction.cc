@@ -65,11 +65,13 @@
 #include "G4PhysicalConstants.hh"
 #include "G4SystemOfUnits.hh"
 
+#include "parameter.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 WLSDetectorConstruction::WLSDetectorConstruction(double length, double gaplength, double mirror_reflectivity, double cube_reflectivity)
   //: fMaterials(NULL), fLogiHole(NULL), fLogiWorld(NULL),
-  	: fMaterials(NULL), fLogiFiberHoleX(NULL), fLogiFiberHoleY(NULL), fLogiFiberHoleZ(NULL), 
+  	: fMaterials(NULL), fLogiFiberHoleX(NULL), fLogiFiberHoleY(NULL), fLogiFiberHoleZ(NULL),
 	  fLogiWorld(NULL), fPhysWorld(NULL),
      //fPhysWorld(NULL), fPhysHole(NULL)
      fPhysFiberHoleX(NULL), fPhysFiberHoleY(NULL), fPhysFiberHoleZ(NULL)
@@ -85,15 +87,15 @@ WLSDetectorConstruction::WLSDetectorConstruction(double length, double gaplength
   //fWLSfiberRY  = 0.5*mm;
   fWLSfiberRY  = 0.50*mm - 0.04*mm; // phi?
   fWLSfiberOrigin = 0.0;
- 
-  fWLSfiberl = length/2 - gaplength*cm; // fWLSfiberl
+
+  fWLSfiberl = (length/2 - gaplength)*cm; // fWLSfiberl
 
   fMPPCShape = "Square";
   fMPPCHalfL = fWLSfiberRY;
   fMPPCDist  = 0.00*mm;
   fMPPCTheta = 0.0*deg;
   fMPPCZ     = 0.05*mm;
- 
+
   fClrfiberZ  = fMPPCZ + 10.*nm;
   fMirrorZ    = 0.1*mm;
 
@@ -105,7 +107,7 @@ WLSDetectorConstruction::WLSDetectorConstruction(double length, double gaplength
 
   fHolePos = 2.1*mm;
  	fHoleRadius   = 0.70*mm;
-  	double penetration = 0.05*mm; // value for the time being 
+  	double penetration = 0.05*mm; // value for the time being
   	//fHoleLength  = 1*cm;//fBarLength;
   	fHoleLength  = fBarBase + fCoatingThickness*2 + penetration*2;
 }
@@ -212,14 +214,14 @@ G4VPhysicalVolume* WLSDetectorConstruction::ConstructDetector()
 */
 /*
 	Lambertian reflectance ( based on Kikawa-san's optical simulation )
-	groundfrontpainted 反射の仕方が常にランバート反射 
-	   : 反射の仕方が常にランバート反射 
+	groundfrontpainted 反射の仕方が常にランバート反射
+	   : 反射の仕方が常にランバート反射
        polishとsigma_alphaの両パラメータは無視されます。
-	groundbackpainted     
+	groundbackpainted
      polishedbackpaintedと計算過程はほぼ同じですが、反射材での反射は常にランバート反射です。
      その一方で、境界面での反射や屈折にはpolishもしくはsigma_alphaが使われます。
      従って、この境界面での反射の分布は、反射材でのランバート反射と境界面での表面粗さの組み合わさったものになります。
-*/	
+*/
   	G4OpticalSurface* TiO2Surface(0);
 	TiO2Surface = new G4OpticalSurface("TiO2Surface",
                                       //glisur,ground,dielectric_metal,1); // SetModel SetFinish SetType SetPolish
@@ -254,11 +256,11 @@ G4VPhysicalVolume* WLSDetectorConstruction::ConstructDetector()
   	TiO2SurfaceProperty -> AddProperty("EFFICIENCY",   p_TiO2,  effi_TiO2,  nbins);
   	TiO2SurfaceProperty -> AddProperty("RINDEX",       p_TiO2,  rind_TiO2,  nbins);
 
-	// SetSigmaAlpha : 
+	// SetSigmaAlpha :
 	// http://wiki.opengatecollaboration.org/index.php/Users_Guide:Generating_and_tracking_optical_photons
-	// This parameter defines the standard deviation of the Gaussian distribution 
+	// This parameter defines the standard deviation of the Gaussian distribution
 	//	of micro-facets around the average surface normal
-  	TiO2Surface -> SetSigmaAlpha(0.0);
+  	TiO2Surface -> SetSigmaAlpha(parameter::sigma_alpha);
   	TiO2Surface -> SetMaterialPropertiesTable(TiO2SurfaceProperty);
 
   	new G4LogicalSkinSurface("TiO2Surface", fLogiExtrusion, TiO2Surface);
@@ -266,10 +268,10 @@ G4VPhysicalVolume* WLSDetectorConstruction::ConstructDetector()
 
 	// Boundary Surface Properties scinti-hole
 	G4OpticalSurface *opSurface = new G4OpticalSurface("RoughSurface",
-                                      glisur,ground,dielectric_dielectric,0.99); // SetModel SetFinish SetType SetPolish 
+                                      glisur,ground,dielectric_dielectric,0.99); // SetModel SetFinish SetType SetPolish
 												  //unified,polished,dielectric_dielectric,0.99); //  SetModel SetFinish SetType SetPolish
-   new G4LogicalBorderSurface("surfaceHoleXOt", fPhysWorld, physScintillator, opSurface); 
-   new G4LogicalBorderSurface("surfaceHoleXIn", physScintillator, fPhysWorld, opSurface); 
+   new G4LogicalBorderSurface("surfaceHoleXOt", fPhysWorld, physScintillator, opSurface);
+   new G4LogicalBorderSurface("surfaceHoleXIn", physScintillator, fPhysWorld, opSurface);
 
 #if 0 // test
    G4OpticalSurface* scint_air = new G4OpticalSurface("Scint_Air");
@@ -280,7 +282,7 @@ G4VPhysicalVolume* WLSDetectorConstruction::ConstructDetector()
 
    G4double ephoton[] = {2.0*eV, 3.5*eV};
    const G4int num = sizeof(ephoton)/sizeof(G4double);
-      
+
    G4double SArefectivity[num] = {0.98, 0.98};
    G4double SAeffciency[num] = {0.0, 0.0};
    G4double SArindex[num] = {1.,1,};
@@ -288,7 +290,7 @@ G4VPhysicalVolume* WLSDetectorConstruction::ConstructDetector()
    G4double SAssc[num] = {0.,0.};
    G4double SAbsc[num] = {0.,0.};
    G4double SAdlc[num] = {0.1,0.1};
-   G4MaterialPropertiesTable* scint_airProperty = new G4MaterialPropertiesTable(); 
+   G4MaterialPropertiesTable* scint_airProperty = new G4MaterialPropertiesTable();
    scint_airProperty->AddProperty("RINDEX",ephoton,SArindex,num);
    scint_airProperty->AddProperty("REFLECTIVITY",ephoton,SArefectivity,num);
    scint_airProperty->AddProperty("EFFICIENCY",ephoton,SAeffciency,num);
@@ -419,7 +421,7 @@ void WLSDetectorConstruction::ConstructFiber()
    new G4LogicalBorderSurface("surfWLSCladInZIn", physWLSCladOtZ,physWLSCladInZ, opSurfAmongWLSComps); // clad2  -> clad
    #endif
 
-   // ----- 
+   // -----
    G4VSolid *solWLSfiber = new G4Tubs("fWLSFiberX",0, fWLSfiberRX,fWLSfiberZ, 0.0*rad,twopi*rad);
    G4LogicalVolume* fLogiWLSCoreX = new G4LogicalVolume(solWLSfiber, FindMaterial("Pethylene"),"LogiWLSFiberX");
    G4LogicalVolume* fLogiWLSCoreY = new G4LogicalVolume(solWLSfiber, FindMaterial("Pethylene"),"LogiWLSFiberY");
@@ -508,10 +510,10 @@ void WLSDetectorConstruction::ConstructFiber()
      	fMPPCOriginZ  = -fCoupleZ+std::cos(fMPPCTheta)*(fMPPCDist+fClrfiberZ);
      	G4cerr << "Invalid alignment.  Alignment Reset to 0" << G4endl;
   	}
- 
+
   	// Clear Fiber (Coupling Layer)
   	G4VSolid* solidClrfiber;
- 
+
   	if ( fMPPCShape == "Square" )
     	solidClrfiber = new G4Box("ClearFiber",fClrfiberHalfL,fClrfiberHalfL,fClrfiberZ);
   	else
@@ -529,7 +531,7 @@ void WLSDetectorConstruction::ConstructFiber()
 #endif
 	//--------------------------------------------------
   	// PhotonDet (Sensitive Detector)
-  	//--------------------------------------------------  
+  	//--------------------------------------------------
 
   	// Physical Construction
   	//G4VSolid* solidPhotonDet;
@@ -572,11 +574,11 @@ void WLSDetectorConstruction::ConstructFiber()
 	fMPPCReflectivity=0;
   	G4double refl_mppc[] = {fMPPCReflectivity,fMPPCReflectivity};
   	assert(sizeof(refl_mppc) == sizeof(p_mppc));
-	// ----- efficiency parameter 
+	// ----- efficiency parameter
 	//      	G4double effi_mppc[] = {1, 1}; // original
-  	G4double effi_mppc[] = {0.35, 0.30}; // 
+  	G4double effi_mppc[] = {parameter::effi_mppc[0], parameter::effi_mppc[1]};
   	assert(sizeof(effi_mppc) == sizeof(p_mppc));
- 
+
   	photonDetSurfProp->AddProperty("REFLECTIVITY",p_mppc, refl_mppc, nbins);
   	photonDetSurfProp->AddProperty("EFFICIENCY",  p_mppc, effi_mppc, nbins);
 	photonDetSurface->SetMaterialPropertiesTable(photonDetSurfProp);
@@ -587,9 +589,9 @@ void WLSDetectorConstruction::ConstructFiber()
 
   	// ----- Mirror for reflection at one of the end
 	/*
-		memo: photons that reach to another end against MPPC 
+		memo: photons that reach to another end against MPPC
             seem to reflect and come to the MPPC side.
-            put mirrors to absorbe them in the mirror side. 
+            put mirrors to absorbe them in the mirror side.
 	*/
 
   	// Place the mirror only if the user wants the mirror
@@ -613,7 +615,7 @@ void WLSDetectorConstruction::ConstructFiber()
    mirrorSurfaceProperty-> AddProperty("REFLECTIVITY",p_mirror,refl_mirror,nbins);
    mirrorSurfaceProperty-> AddProperty("EFFICIENCY",p_mirror,effi_mirror,nbins);
    mirrorSurface -> SetMaterialPropertiesTable(mirrorSurfaceProperty);
-#if 1 
+#if 1
    //   G4double fHolePos = 2*mm;
    new G4LogicalSkinSurface("MirrorSurface",logicMirror,mirrorSurface);
    new G4PVPlacement(rotMX, G4ThreeVector(+fHolePos,-fWLSfiberZ+fWLSfiberl,+fHolePos), logicMirror, "Mirror", fLogiWorld, false, 0);
@@ -661,15 +663,15 @@ void WLSDetectorConstruction::UpdateGeometryParameters()
   fWorldSizeX = fWLSfiberZ + fabs(fWLSfiberl) + fMPPCDist + fMPPCHalfL + 20.*cm;
   fWorldSizeY = fWLSfiberZ + fabs(fWLSfiberl) + fMPPCDist + fMPPCHalfL + 20.*cm;
   fWorldSizeZ = fWLSfiberZ + fabs(fWLSfiberl) + fMPPCDist + fMPPCHalfL + 20.*cm;
- 
+
   fCoupleRX = fWorldSizeX;
   fCoupleRY = fWorldSizeY;
   fCoupleZ  = (fWorldSizeZ - fWLSfiberZ) / 2;
- 
+
   fClrfiberHalfL = fMPPCHalfL;
- 
+
   fMirrorRmax = fClad2RY;
- 
+
   fCoupleOrigin = fWLSfiberOrigin + fWLSfiberZ + fCoupleZ;
   fMirrorOrigin = fWLSfiberOrigin - fWLSfiberZ - fMirrorZ;
   fMPPCOriginX  = std::sin(fMPPCTheta) * (fMPPCDist + fClrfiberZ);
@@ -697,7 +699,7 @@ G4RotationMatrix
         const G4String tmpstring=rotation.substr(place+1);
 
         angle = strtod(tmpstring.c_str(),&p) * deg;
- 
+
         if (!p || (*p != (char)',' && *p != (char)'\0')) {
            G4cerr << "Invalid rotation specification: " <<
                                                   rotation.c_str() << G4endl;
@@ -802,7 +804,7 @@ void WLSDetectorConstruction::SetPhotonDetHalfLength(G4double halfL)
 
 void WLSDetectorConstruction::SetGap (G4double gap)
 // Set the distance between fiber end and PhotonDet
-{ 
+{
   fMPPCDist = gap;
   G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
