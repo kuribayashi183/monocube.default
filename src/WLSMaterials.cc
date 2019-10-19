@@ -397,11 +397,17 @@ void WLSMaterials::CreateMaterials()
    2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm,2.*cm};
 #endif
 #if 1 
+
+	38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
+	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
+	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
+	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,
+	  38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm,38.*cm};
+	/*   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
    35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
    35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
    35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,
-   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm};
+   35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm,35.*cm};*/
 #endif
   	assert(sizeof(absPS) == sizeof(photonEnergy));
 	G4double scintilFast[] = { 

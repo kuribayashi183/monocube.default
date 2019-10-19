@@ -86,7 +86,7 @@ WLSDetectorConstruction::WLSDetectorConstruction(double length, double gaplength
   fWLSfiberRY  = 0.50*mm - 0.04*mm; // phi?
   fWLSfiberOrigin = 0.0;
  
-  fWLSfiberl = length/2 - gaplength*cm; // fWLSfiberl
+  fWLSfiberl = length/2 - gaplength*cm; // fWLSfiberl is a relative center position of the fiber compared to the cube position
 
   fMPPCShape = "Square";
   fMPPCHalfL = fWLSfiberRY;
